@@ -6,7 +6,8 @@
 新增短網址
 ![image](https://github.com/Jdonggit/short_url/blob/master/url_to.jpg)
 
-
+測試結果
+![image](https://github.com/Jdonggit/short_url/blob/master/testing.jpg)
 
 ### (1) 建立縮網址功能
 
@@ -22,6 +23,7 @@
 - 可同時建立多筆縮網址
 
 ### (3) 縮網址導回原始網址
+以下項目有寫測試
 
 - 有效時間 1小時 （expired_time 創建時間 加一小時為有效時間）
 - 超過有效期間，回應 404

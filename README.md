@@ -13,9 +13,9 @@
 - 檢查 URL 是否符合標準
 - 同一個網址，每次產生結果不一樣
 - 會有 兩種 Encode 演算法，可透過環境設定切換
- .env檔案 
-SHORT_TYPE = random 以`Str::random`
-SHORT_TYPE = encrypt 以`encrypt`
+-  .env檔案 
+- - - SHORT_TYPE = `random` 以`Str::random` 
+- - - SHORT_TYPE = `encrypt` 以`encrypt`
 
 ### (2) 批次建立縮網址功能
 

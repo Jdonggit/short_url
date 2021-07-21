@@ -25,7 +25,8 @@
         @foreach($links as $link)
 		<p>您所轉換的短網址:<a 
 			href="{{url($link->short_url)}}">
-			{{url($link->short_url)}}</a>
+			{{url($link->short_url)}} </a>
+            （短網址有效時間到 ： {{ $link-> expired_time }} 止, 點擊次數：{{ $link-> click_count }} ）
 		</p>
         @endforeach
 	</div>

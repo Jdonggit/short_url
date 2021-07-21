@@ -30,13 +30,12 @@ class ShortUrlFactory extends Factory
             $encode = encrypt(Str::random(10));
         }
 
-        $now = Carbon::now();
 
         return [
             //
             'original_address' => 'http://'.Str::random(10).'.com',
             'short_url' => $encode,
-            'expired_time' => $now->addHours(1),
+            'expired_time' => Carbon::now()->addHours(1),
             'click_count' => 0
         ];
     }

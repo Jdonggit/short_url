@@ -16,7 +16,7 @@ class ShortUrl extends Model
     public function getShortUrl($url)
     {
         return $this->where('short_url',$url)
-                ->where('expired_time', '>=',  Carbon::now())
+                ->where('expired_time', '>',  Carbon::now())
                 ->firstOrFail();
     }
 

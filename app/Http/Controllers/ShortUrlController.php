@@ -7,15 +7,17 @@ use App\Models\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Contracts\UrlEncode\UrlEncode;
 
 class ShortUrlController extends Controller
 {
     protected $shortUrl, $visitor;
 
-    public function __construct(ShortUrl $shortUrl, Visitor $visitor)
+    public function __construct(ShortUrl $shortUrl, Visitor $visitor, UrlEncode $urlEncode)
     {
         $this->shortUrl = $shortUrl;
         $this->visitor = $visitor;
+        $this->urlEncode = $urlEncode;
     }
 
     public function redirect()
@@ -64,7 +66,7 @@ class ShortUrlController extends Controller
         // 取得現在時間
         $now = Carbon::now();
         foreach ($request->original_address as $key => $value) {
-            $encode = $this->encode_url();
+            $encode = $this->urlEncode->encode();
             
             // 把編碼網址放到暫存陣列中
             $encode_ary[] = $encode;
@@ -86,13 +88,4 @@ class ShortUrlController extends Controller
         ]);
     }
     
-    public function encode_url(){
-        if(env('SHORT_TYPE') == 'random'){
-            $encode = Str::random(10);
-        }elseif(env('SHORT_TYPE') == 'encrypt'){
-            $encode = encrypt(Str::random(10));
-        }
-
-        return $encode;
-    }
 }

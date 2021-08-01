@@ -20,7 +20,7 @@ abstract class BaseRepository implements IRepository
 
     public function create(array $data)
     {
-        $newModelInstance = $this->app->make($this->$modelClass);
+        $newModelInstance = $this->app->make($this->modelClass);
         return $this->setModelInstance($newModelInstance, $data);
     }
 
@@ -36,7 +36,7 @@ abstract class BaseRepository implements IRepository
 
     public function update($id, array $data)
     {
-        $modelInstance = $this->$modelClass::find($id);
+        $modelInstance = $this->modelClass::find($id);
         return $this->setModelInstance($modelInstance, $data);
     }
 

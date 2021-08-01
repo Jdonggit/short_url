@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Repositories;
+
 use App\Models\ShortUrl;
 
 class ShortUrlRepository extends BaseRepository

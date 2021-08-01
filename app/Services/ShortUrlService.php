@@ -21,6 +21,31 @@ class ShortUrlService extends BaseService
         $this->urlEncode = $urlEncode;
     }
 
+    public function getShortUrl($url)
+    {
+        // 取得現在時間
+        $now = Carbon::now();
+            
+        // 查找短網址符合條件的資料 ＆ 檢查是否超過時限 
+        $short_url = $this->repository->getShortUrl($url);
+        
+        $address = $short_url->original_address;
+
+        // 訪問者是否有點擊過短網址
+        $visitor = $this->visitorRepo->getVisitorIp($url);
+        // 沒訪問過 新增訪問者ip 並 新增點擊率
+        if(!isset($visitor)){
+            $this->visitorRepo->create([
+                'ip' => request()->ip(),
+                'short_url' => $url,
+            ]);
+            $short_url->click_count += 1;
+            $short_url->save(); 
+        }
+        
+        return $address;
+    }
+
     public function insertShortUrlAndGetUrls($input)
     {
         // 批次新增陣列

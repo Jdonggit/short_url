@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\ShortUrl;
+use Carbon\Carbon;
 
 class ShortUrlRepository extends BaseRepository
 {

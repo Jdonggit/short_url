@@ -9,43 +9,25 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Contracts\UrlEncode\UrlEncode;
 use App\Repositories\ShortUrlRepository;
+use App\Services\ShortUrlService;
 
 class ShortUrlController extends Controller
 {
     protected $repo, $visitor;
 
-    public function __construct(ShortUrlRepository $repo, Visitor $visitor, UrlEncode $urlEncode)
+    public function __construct(ShortUrlRepository $repo, Visitor $visitor, ShortUrlService $shortUrlService)
     {
         $this->repo = $repo;
         $this->visitor = $visitor;
-        $this->urlEncode = $urlEncode;
+        $this->shortUrlService = $shortUrlService;
     }
 
     public function redirect()
     {
-        $url = (trim(request()->getPathInfo(),'/'));
-        
         try {
-
-            // 取得現在時間
-            $now = Carbon::now();
-            
+            $url = (trim(request()->getPathInfo(),'/'));
             // 查找短網址符合條件的資料 ＆ 檢查是否超過時限 
-            $short_url = $this->repo->getShortUrl($url);
-            
-            $address = $short_url->original_address;
-
-            // 訪問者是否有點擊過短網址
-            $visitor = $this->visitor->getVisitorIp($url);
-            // 沒訪問過 新增訪問者ip 並 新增點擊率
-            if(!isset($visitor)){
-                $this->visitor->create([
-                    'ip' => request()->ip(),
-                    'short_url' => $url,
-                ]);
-                $short_url->click_count += 1;
-                $short_url->save(); 
-            }
+            $address = $this->shortUrlService->getShortUrl($url);
             
             return redirect()->to($address);
         } catch (\Throwable $th) {
@@ -60,32 +42,9 @@ class ShortUrlController extends Controller
         $request->validate([
             'original_address.*' => ['url'],
         ]);
-        // 批次新增陣列
-        $insert = [];
-        // 暫存encode 陣列
-        $encode_ary = [];
-        // 取得現在時間
-        $now = Carbon::now();
-        foreach ($request->original_address as $key => $value) {
-            $encode = $this->urlEncode->encode();
-            
-            // 把編碼網址放到暫存陣列中
-            $encode_ary[] = $encode;
-            $insert[] = [
-                'original_address'=> $value,
-                'short_url' => $encode,
-                'created_at' => date("Y-m-d H:i:s"),
-                'expired_time' => $now->addHours(1), // 現在時間加上一小時 ＝ 短網址時限
-            ];
-        }
         
-        $this->repo->insert($insert);
-
         // 取得方才所新增的短網址, 顯示在首頁
-
-        $links = $this->repo->whereInGet('short_url', $encode_ary);
-        
-        // $links = $this->repo->whereIn('short_url', $encode_ary)->get();
+        $links = $this->shortUrlService->insertShortUrlAndGetUrls($request);
         
         return view('home',[
             'links'=>$links

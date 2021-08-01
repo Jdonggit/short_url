@@ -9,8 +9,4 @@ class Visitor extends Model
 {
     use HasFactory;
     protected $guarded=[];
-
-    public function getVisitorIp($url){
-        return $this->where('ip', request()->ip())->where('short_url',$url)->first();
-    }
 }

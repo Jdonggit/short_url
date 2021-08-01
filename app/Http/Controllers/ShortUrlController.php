@@ -8,14 +8,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Contracts\UrlEncode\UrlEncode;
+use App\Repositories\ShortUrlRepository;
 
 class ShortUrlController extends Controller
 {
-    protected $shortUrl, $visitor;
+    protected $repo, $visitor;
 
-    public function __construct(ShortUrl $shortUrl, Visitor $visitor, UrlEncode $urlEncode)
+    public function __construct(ShortUrlRepository $repo, Visitor $visitor, UrlEncode $urlEncode)
     {
-        $this->shortUrl = $shortUrl;
+        $this->repo = $repo;
         $this->visitor = $visitor;
         $this->urlEncode = $urlEncode;
     }
@@ -30,7 +31,7 @@ class ShortUrlController extends Controller
             $now = Carbon::now();
             
             // 查找短網址符合條件的資料 ＆ 檢查是否超過時限 
-            $short_url = $this->shortUrl->getShortUrl($url);
+            $short_url = $this->repo->getShortUrl($url);
             
             $address = $short_url->original_address;
 
@@ -78,10 +79,13 @@ class ShortUrlController extends Controller
             ];
         }
         
-        $this->shortUrl->insert($insert);
+        $this->repo->insert($insert);
 
         // 取得方才所新增的短網址, 顯示在首頁
-        $links = $this->shortUrl->whereIn('short_url', $encode_ary)->get();
+
+        $links = $this->repo->whereInGet('short_url', $encode_ary);
+        
+        // $links = $this->repo->whereIn('short_url', $encode_ary)->get();
         
         return view('home',[
             'links'=>$links

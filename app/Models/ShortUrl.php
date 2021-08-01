@@ -13,11 +13,4 @@ class ShortUrl extends Model
     protected $guarded=[];
 
 
-    public function getShortUrl($url)
-    {
-        return $this->where('short_url',$url)
-                ->where('expired_time', '>',  Carbon::now())
-                ->firstOrFail();
-    }
-
 }
